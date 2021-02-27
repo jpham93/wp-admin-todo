@@ -38,6 +38,8 @@
                    class="todo-item-checkbox"
                    id="todo-item-checkbox-<?php echo $post->ID ?>"
                    data-id="<?php echo $post->ID ?>"
+                    <!--      weird opposite behavior but working as expected...             -->
+                   <?php echo $post->post_status === 'open' ? 'checked' : ''; ?>
             >
             <input type="text"
                    disabled
