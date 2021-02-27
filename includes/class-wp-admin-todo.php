@@ -157,6 +157,12 @@ class Wp_Admin_Todo {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
         $this->loader->add_action('admin_menu', $plugin_admin, 'create_admin_page');
+        $this->loader->add_action('admin_menu', $plugin_admin, 'create_admin_page');
+
+        $this->loader->add_action( 'init', $plugin_admin, 'register_custom_posts');         // register custom post types for adding/removing
+
+        $this->loader->add_action( 'wp_ajax_add_todo', $plugin_admin, 'add_todo');       // register custom post types for adding/removing
+        $this->loader->add_action( 'wp_ajax_delete_todo', $plugin_admin, 'remove_todo');    // register custom post types for adding/removing
 
 	}
 

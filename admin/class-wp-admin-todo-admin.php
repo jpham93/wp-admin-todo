@@ -120,4 +120,45 @@ class Wp_Admin_Todo_Admin {
         include_once 'partials/wp-admin-todo-admin-display.php';
     }
 
+    public function register_custom_posts()
+    {
+        $args = array(
+            // For full range of label controls, see TemplatesDownloadWidget.php for more information
+            'labels'              => 'WP Admin TODO',
+            'description'         => 'TODO post storage',
+            'public'              => false,
+            'hierarchical'        => false,
+            'show_ui'             => false,
+            'show_in_menu'        => false,
+            'show_in_nav_menus'   => false,
+            'show_in_admin_bar'   => false,
+            'can_export'          => true,
+            'has_archive'         => true,
+            'exclude_from_search' => true,
+            'publicly_queryable'  => false,
+            'show_in_rest'        => true,
+        );
+
+        register_post_type( 'wp-admin-todo', $args );
+    }
+
+
+    /**
+     * CRUD - CUSTOM REST FUNCTIONS
+     */
+
+    public function add_todo()
+    {
+        $content    = $_POST['todo-content'];
+        $status     = $_POST['todo-status'];
+        $post_ID    = $_POST['todo-ID'];
+    }
+
+    public function remove_todo()
+    {
+        $content    = $_POST['todo-content'];
+        $status     = $_POST['todo-status'];
+        $post_ID    = $_POST['todo-ID'];
+    }
+
 }
