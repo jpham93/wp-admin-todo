@@ -150,7 +150,7 @@ class Wp_Admin_Todo_Admin {
      */
 
     /**
-     * FUNCTION IS OVERLOADED (IF USER PROVIDES $POST_ID, THEN EDIT POST)
+     * FUNCTION IS OVERLOADED
      */
     public function add_todo()
     {
@@ -163,15 +163,28 @@ class Wp_Admin_Todo_Admin {
             'post_status'  => $status
         );
 
-        // overload w/ ID for Editing
-        if ( isset( $_POST['todo-ID'] ) && ! empty( $_POST['todo-ID'] ) ) {
-            $postarr['ID'] = $_POST['todo-ID'];
-        }
-
         wp_insert_post( $postarr );
 
-//        echo $content;
-//        echo $status;
+
+    }
+
+    /**
+     * EDIT POST
+     */
+    public function edit_post()
+    {
+        $content    = $_POST['todo-content'];
+        $status     = $_POST['todo-status'];
+        $ID         = $_POST['todo-ID'];
+
+        $postarr = array(
+            'post_type'    => 'wp-admin-todo',
+            'ID'           => $ID,
+            'post_content' => $content,
+            'post_status'  => $status
+        );
+
+        wp_update_post( $postarr );
     }
 
     /**

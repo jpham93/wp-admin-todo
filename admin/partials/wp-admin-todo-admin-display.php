@@ -29,14 +29,32 @@
                 )
             );
 
-        var_dump($posts);
-
-        foreach( $posts as $post):
+        if ( count($posts) ) {
+            foreach( $posts as $post) {
     ?>
-<!--        <li>-->
-<!--            <input type="text" disabled value="--><?php //echo $post ?><!--"-->
-<!--        </li>-->
-    <?php endforeach; ?>
+
+        <li>
+            <input type="checkbox"
+                   class="todo-item-checkbox"
+                   id="todo-item-checkbox-<?php echo $post->ID ?>"
+                   data-id="<?php echo $post->ID ?>"
+            >
+            <input type="text"
+                   disabled
+                   value="<?php echo $post->post_content; ?>"
+                   id="todo-item-<?php echo $post->ID ?>"
+                   class="todo-item"
+                   data-id="<?php echo $post->ID ?>"
+            >
+            <button id="todo-add-button" class="btn btn-outline-danger btn-small">
+                -
+            </button>
+        </li>
+
+    <?php
+            }
+        }
+    ?>
 </ul>
 
 <!--ADD FUNCTION-->
@@ -55,8 +73,6 @@
 
         const content = document.getElementById('add-content-input').value;
 
-        console.log(content);
-
         // send as form data instead of JSON (catch via $_POST)
         const formData  = new FormData();
 
@@ -74,7 +90,37 @@
         });
 
         // refresh page to load new data
-        // location.reload();
+        location.reload();
     });
+
+    // EDIT (CHECKBOXES)
+    const checkboxes = document.querySelectorAll('input.todo-item-checkbox');
+
+    checkboxes.forEach( checkbox => {
+
+        checkbox.addEventListener('click', async function(e) {
+
+            const status = this.checked ? 'finished' : 'open';
+            const postID = this.getAttribute('data-id')
+            const content = document.getElementById(`todo-item-${postID}`).value;     // repass content. Not enough time to do dynamic updating in AJAX route
+
+            const formData  = new FormData();
+
+            // AJAX route
+            formData.append('action', 'edit_todo');
+
+            // attach payload
+            formData.append('todo-status', status);
+            formData.append('todo-content', content);
+            formData.append('ID', postID);
+
+            // don't worry about response for now
+            await fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+            });
+
+        });
+    })
 
 </script>
