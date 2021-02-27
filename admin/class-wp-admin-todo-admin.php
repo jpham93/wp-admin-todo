@@ -127,7 +127,7 @@ class Wp_Admin_Todo_Admin {
             // For full range of label controls, see TemplatesDownloadWidget.php for more information
             'labels'              => 'WP Admin TODO',
             'description'         => 'TODO post storage',
-            'public'              => false,
+            'public'              => true, // May have to change later if GF cannot render for customers
             'hierarchical'        => false,
             'show_ui'             => false,
             'show_in_menu'        => false,
@@ -135,8 +135,9 @@ class Wp_Admin_Todo_Admin {
             'show_in_admin_bar'   => false,
             'can_export'          => true,
             'has_archive'         => true,
-            'exclude_from_search' => true,
-            'publicly_queryable'  => false,
+            'exclude_from_search' => false,
+            'publicly_queryable'  => true,
+            'capability_type'     => 'post',  // not sure yet
             'show_in_rest'        => true,
         );
 

@@ -21,17 +21,21 @@
     <?php
         $posts = get_posts(
                 array(
-                    'post_type' => 'wp-admin-todo'
+                    'post_type'        => 'wp-admin-todo',
+                    'post_status'      => array( 'open', 'finished' ),
+                    'orderby'          => 'date',
+                    'order'            => 'DESC',
+                    'suppress_filters' => true,
                 )
             );
 
-//        var_dump();
+        var_dump($posts);
 
         foreach( $posts as $post):
     ?>
-        <li>
-            <input type="text" disabled value="<?php echo $post ?>"
-        </li>
+<!--        <li>-->
+<!--            <input type="text" disabled value="--><?php //echo $post ?><!--"-->
+<!--        </li>-->
     <?php endforeach; ?>
 </ul>
 
