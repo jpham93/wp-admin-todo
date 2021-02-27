@@ -147,18 +147,36 @@ class Wp_Admin_Todo_Admin {
      * CRUD - CUSTOM REST FUNCTIONS
      */
 
+    /**
+     * FUNCTION IS OVERLOADED (IF USER PROVIDES $POST_ID, THEN EDIT POST)
+     */
     public function add_todo()
     {
         $content    = $_POST['todo-content'];
         $status     = $_POST['todo-status'];
-        $post_ID    = $_POST['todo-ID'];
+
+        $postarr = array(
+            'post_type'    => 'wpp_mm_template',
+            'post_content' => $content,
+            'post_status'  => $status
+        );
+
+        // overload w/ ID for Editing
+        if ( isset( $_POST['todo-ID'] ) && ! empty( $_POST['todo-ID'] ) ) {
+            $postarr['ID'] = $_POST['todo-ID'];
+        }
+
+        wp_insert_post( $postarr );
     }
 
+    /**
+     * DELETES POST (TODO)
+     */
     public function remove_todo()
     {
-        $content    = $_POST['todo-content'];
-        $status     = $_POST['todo-status'];
         $post_ID    = $_POST['todo-ID'];
+
+        wp_delete_post( $post_ID );
     }
 
 }
