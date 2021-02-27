@@ -38,7 +38,7 @@
                    class="todo-item-checkbox"
                    id="todo-item-checkbox-<?php echo $post->ID ?>"
                    data-id="<?php echo $post->ID ?>"
-                   <?php echo $post->post_status === 'open' ? 'checked' : ''; ?>
+                   <?php echo $post->post_status === 'finished' ? 'checked' : ''; ?>
             >
             <input type="text"
                    disabled
@@ -47,7 +47,7 @@
                    class="todo-item"
                    data-id="<?php echo $post->ID ?>"
             >
-            <button id="todo-add-button"
+            <button id="todo-item-remove-<?php echo $post->ID ?>"
                     class="btn btn-outline-danger btn-small delete-button"
                     data-id="<?php echo $post->ID ?>"
             >
@@ -70,7 +70,7 @@
     // AJAX URL
     const ajaxUrl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
 
-    // ADD TODO
+    // ADD ITEM
     const addButton = document.getElementById('todo-add-button');
 
     addButton.addEventListener('click', async function(e) {
@@ -94,7 +94,7 @@
         });
 
         // // refresh page to load new data
-        // location.reload();
+        location.reload();
     });
 
     // EDIT (CHECKBOXES)

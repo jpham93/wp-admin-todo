@@ -171,7 +171,7 @@ class Wp_Admin_Todo_Admin {
     /**
      * EDIT POST
      */
-    public function edit_post()
+    public function edit_todo()
     {
         $content    = $_POST['todo-content'];
         $status     = $_POST['todo-status'];
