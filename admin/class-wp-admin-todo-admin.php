@@ -168,6 +168,9 @@ class Wp_Admin_Todo_Admin {
         }
 
         wp_insert_post( $postarr );
+
+//        echo $content;
+//        echo $status;
     }
 
     /**

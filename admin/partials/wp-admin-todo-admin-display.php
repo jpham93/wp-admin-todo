@@ -25,16 +25,18 @@
                 )
             );
 
+//        var_dump();
+
         foreach( $posts as $post):
     ?>
         <li>
-            <input type="text" disabled value="<?php echo $post->get_content() ?>"
+            <input type="text" disabled value="<?php echo $post ?>"
         </li>
     <?php endforeach; ?>
 </ul>
 
 <!--ADD FUNCTION-->
-<input type="text" name="content" id="add-content-input">
+<input type="text" id="add-content-input">
 <button id="todo-add-button" class="btn btn-outline-primary btn-small">+</button>
 
 <script>
@@ -58,7 +60,8 @@
         formData.append('action', 'add_todo');
 
         // attach payload
-        formData.append('content', content)
+        formData.append('todo-content', content);
+        formData.append('todo-status', 'open');
 
         // don't worry about response for now
         await fetch(ajaxUrl, {
