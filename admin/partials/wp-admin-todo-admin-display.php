@@ -38,7 +38,6 @@
                    class="todo-item-checkbox"
                    id="todo-item-checkbox-<?php echo $post->ID ?>"
                    data-id="<?php echo $post->ID ?>"
-                    <!--      weird opposite behavior but working as expected...             -->
                    <?php echo $post->post_status === 'open' ? 'checked' : ''; ?>
             >
             <input type="text"
@@ -48,7 +47,10 @@
                    class="todo-item"
                    data-id="<?php echo $post->ID ?>"
             >
-            <button id="todo-add-button" class="btn btn-outline-danger btn-small">
+            <button id="todo-add-button"
+                    class="btn btn-outline-danger btn-small delete-button"
+                    data-id="<?php echo $post->ID ?>"
+            >
                 -
             </button>
         </li>
@@ -91,8 +93,8 @@
             body: formData
         });
 
-        // refresh page to load new data
-        location.reload();
+        // // refresh page to load new data
+        // location.reload();
     });
 
     // EDIT (CHECKBOXES)
@@ -114,7 +116,7 @@
             // attach payload
             formData.append('todo-status', status);
             formData.append('todo-content', content);
-            formData.append('ID', postID);
+            formData.append('todo-ID', postID);
 
             // don't worry about response for now
             await fetch(ajaxUrl, {
@@ -123,6 +125,36 @@
             });
 
         });
-    })
+    });
+
+    // delete action
+    const deleteButton = document.querySelectorAll('.delete-button');
+
+    deleteButton.forEach(deleteButton => {
+
+        deleteButton.addEventListener('click', async function (e) {
+
+            const postID = this.getAttribute('data-id')
+
+            const formData  = new FormData();
+
+            // AJAX route
+            formData.append('action', 'delete_todo');
+
+            // attach payload
+            formData.append('todo-ID', postID);
+
+            // don't worry about response for now
+            await fetch(ajaxUrl, {
+                method: 'POST',
+                body: formData
+            });
+
+            // refresh page to load new data
+            location.reload();
+
+        });
+
+    });
 
 </script>
