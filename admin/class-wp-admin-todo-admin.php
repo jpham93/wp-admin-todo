@@ -100,4 +100,24 @@ class Wp_Admin_Todo_Admin {
 
 	}
 
+    /**
+     * Generate the main "Settings" page for this plugin
+     *
+     * @since 1.0.0
+     */
+	public function create_admin_page()
+    {
+        add_menu_page('TODO Main', 'Admin TODO', 'manage_options', 'wp-admin-todo-main', [$this, 'main_page_init'], 'dashicons-edit');
+    }
+
+    /**
+     * PHP View for TODO MAIN
+     *
+     * @since 1.0.0
+     */
+    public function main_page_init()
+    {
+        include_once 'partials/wp-admin-todo-admin-display.php';
+    }
+
 }

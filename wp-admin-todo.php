@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       WP Admin TODO
  * Plugin URI:        https://github.com/jpham93/wp-admin-todo
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       This is a simple TODO plugin for WordPress admins.
  * Version:           1.0.0
  * Author:            James Pham
  * Author URI:        https://jamespham.io
