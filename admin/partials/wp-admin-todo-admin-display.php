@@ -48,7 +48,10 @@
                    data-id="<?php echo $post->ID ?>"
             >
             <button id="todo-item-edit-<?php echo $post->ID ?>"
-                    class="btn btn-outline-warning btn-small todo-item-edit-button">
+                    class="btn btn-outline-warning btn-small todo-item-edit-button"
+                    data-toggle="inactive"
+                    data-id="<?php echo $post->ID ?>"
+            >
                 <span class="dashicons dashicons-edit"></span>
             </button>
             <button id="todo-item-remove-<?php echo $post->ID ?>"
@@ -101,12 +104,12 @@
         location.reload();
     });
 
-    // EDIT (CHECKBOXES)
+    // EDIT ITEM (CHECKBOXES)
     const checkboxes = document.querySelectorAll('input.todo-item-checkbox');
 
     checkboxes.forEach( checkbox => {
 
-        checkbox.addEventListener('click', async function(e) {
+        checkbox.addEventListener('click', async function() {
 
             const status = this.checked ? 'finished' : 'open';
             const postID = this.getAttribute('data-id')
@@ -131,12 +134,50 @@
         });
     });
 
-    // delete action
+    // EDIT ITEM (CONTENT)
+    const editButtons = document.querySelectorAll('button.todo-item-edit-button');
+
+    editButtons.forEach(editButton => {
+
+        editButton.addEventListener('click', function() {
+
+            const postID        = this.getAttribute('data-id');
+            const toggle        = this.getAttribute('data-toggle');
+            const todoInput     = document.getElementById(`todo-item-${postID}`);
+
+            // if inactive, change toggle status & allow for inline editing.
+            if (toggle === 'inactive') {
+
+                this.setAttribute('data-toggle', 'active');
+                todoInput.disabled  = false;
+
+                // change colors with state change
+                this.classList.add('btn-outline-success')
+                this.classList.remove('btn-outline-warning');
+
+            }
+            // if active, save current values to DB and disable input
+            else {
+
+                this.setAttribute('data-toggle', 'inactive');
+                todoInput.disabled  = true;
+
+                // change colors with state change
+                this.classList.add('btn-outline-warning');
+                this.classList.remove('btn-outline-success');
+
+            }
+
+        });
+
+    });
+
+    // DELETE ITEM
     const deleteButton = document.querySelectorAll('.todo-item-delete-button');
 
     deleteButton.forEach(deleteButton => {
 
-        deleteButton.addEventListener('click', async function (e) {
+        deleteButton.addEventListener('click', async function() {
 
             const postID = this.getAttribute('data-id')
 
