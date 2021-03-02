@@ -73,8 +73,9 @@ class Wp_Admin_Todo_Admin {
 		 * class.
 		 */
 
-//		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-admin-todo-admin.css', array(), $this->version, 'all' );
+        wp_enqueue_style( 'dashicons' );
         wp_enqueue_style( $this->plugin_name, plugin_dir_url( __DIR__ ) . 'bootstrap/bootstrap.min.css', array(), $this->version, 'all' );
+        wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-admin-todo-admin.css', array(), $this->version, 'all' );
 
 	}
 

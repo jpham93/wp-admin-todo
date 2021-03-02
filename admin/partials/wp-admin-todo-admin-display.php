@@ -47,11 +47,15 @@
                    class="todo-item"
                    data-id="<?php echo $post->ID ?>"
             >
+            <button id="todo-item-edit-<?php echo $post->ID ?>"
+                    class="btn btn-outline-warning btn-small todo-item-edit-button">
+                <span class="dashicons dashicons-edit"></span>
+            </button>
             <button id="todo-item-remove-<?php echo $post->ID ?>"
-                    class="btn btn-outline-danger btn-small delete-button"
+                    class="btn btn-outline-danger btn-small todo-item-delete-button"
                     data-id="<?php echo $post->ID ?>"
             >
-                -
+                <span class="dashicons dashicons-trash"></span>
             </button>
         </li>
 
@@ -128,7 +132,7 @@
     });
 
     // delete action
-    const deleteButton = document.querySelectorAll('.delete-button');
+    const deleteButton = document.querySelectorAll('.todo-item-delete-button');
 
     deleteButton.forEach(deleteButton => {
 
