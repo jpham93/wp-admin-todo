@@ -122,7 +122,6 @@
 
             // attach payload
             formData.append('todo-status', status);
-            formData.append('todo-content', content);
             formData.append('todo-ID', postID);
 
             // don't worry about response for now
@@ -139,7 +138,7 @@
 
     editButtons.forEach(editButton => {
 
-        editButton.addEventListener('click', function() {
+        editButton.addEventListener('click', async function() {
 
             const postID        = this.getAttribute('data-id');
             const toggle        = this.getAttribute('data-toggle');
@@ -165,6 +164,24 @@
                 // change colors with state change
                 this.classList.add('btn-outline-warning');
                 this.classList.remove('btn-outline-success');
+
+                // save current value to DB
+                const content = todoInput.value;
+
+                const formData = new FormData();
+
+                // edit action controller
+                formData.append('action', 'edit_todo');
+
+                // edit controller
+                formData.append('todo-ID', postID);
+                formData.append('todo-content', content);       // updated content...
+
+                // don't worry about response for now
+                await fetch(ajaxUrl, {
+                    method: 'POST',
+                    body: formData
+                });
 
             }
 

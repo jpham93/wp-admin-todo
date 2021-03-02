@@ -151,7 +151,7 @@ class Wp_Admin_Todo_Admin {
      */
 
     /**
-     * FUNCTION IS OVERLOADED
+     * ADD A TODO ITEM
      */
     public function add_todo()
     {
@@ -165,33 +165,48 @@ class Wp_Admin_Todo_Admin {
         );
 
         wp_insert_post( $postarr );
-
-
     }
 
     /**
-     * EDIT POST
+     * EDIT A TODO ITEM
+     * Overloaded:
+     *  1. Change status of the item (if status is defined)
+     *  2. Change the content of the item (if content is defined)
      */
     public function edit_todo()
     {
-        $content    = $_POST['todo-content'];
-        $status     = $_POST['todo-status'];
+//        $content    = $_POST['todo-content'];
+//        $status     = $_POST['todo-status'];
         $ID         = $_POST['todo-ID'];
 
-        $postarr = array(
-            'post_type'    => 'wp-admin-todo',
-            'ID'           => $ID,
-            'post_content' => $content,
-            'post_status'  => $status
-        );
+        // 1. status update
+        if ( isset( $_POST['todo-status'] ) ) {
+
+            $postarr = array(
+                'post_type'    => 'wp-admin-todo',
+                'ID'           => $ID,
+                'post_status'  => $_POST['todo-status']
+            );
+
+        }
+        // 2. content update
+        elseif ( isset( $_POST['todo-content'] ) ) {
+
+            $postarr = array(
+                'post_type'    => 'wp-admin-todo',
+                'ID'           => $ID,
+                'post_content' => $_POST['todo-content']
+            );
+
+        }
 
         wp_update_post( $postarr );
     }
 
     /**
-     * DELETES POST (TODO)
+     * DELETES TODO ITEM
      */
-    public function remove_todo()
+    public function delete_todo()
     {
         $post_ID    = $_POST['todo-ID'];
 

@@ -163,7 +163,7 @@ class Wp_Admin_Todo {
 
         $this->loader->add_action( 'wp_ajax_add_todo', $plugin_admin, 'add_todo');       // register custom post types for adding/removing
         $this->loader->add_action( 'wp_ajax_edit_todo', $plugin_admin, 'edit_todo');
-        $this->loader->add_action( 'wp_ajax_delete_todo', $plugin_admin, 'remove_todo');    // register custom post types for adding/removing
+        $this->loader->add_action( 'wp_ajax_delete_todo', $plugin_admin, 'delete_todo');    // register custom post types for adding/removing
 
 	}
 
