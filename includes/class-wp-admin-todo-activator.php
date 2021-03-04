@@ -4,11 +4,13 @@
  * Fired during plugin activation
  *
  * @link       https://jamespham.io
- * @since      1.0.0
+ * @since      2.0.0
  *
  * @package    Wp_Admin_Todo
  * @subpackage Wp_Admin_Todo/includes
  */
+
+require_once( plugin_dir_path( __DIR__ ) . '/includes/class-wp-admin-todo-database.php' );
 
 /**
  * Fired during plugin activation.
@@ -23,14 +25,14 @@
 class Wp_Admin_Todo_Activator {
 
 	/**
-	 * Short Description. (use period)
+	 * Create the necessary tables in MySQL upon activating the
 	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
+	 * @since    2.0.0
 	 */
-	public static function activate() {
-
+	public static function activate()
+    {
+	    $db = new Wp_Admin_Todo_Database();
+	    $db->init_tables();
 	}
 
 }
