@@ -103,23 +103,31 @@ class Wp_Admin_Todo_Admin {
 	}
 
     /**
-     * Generate the main "Settings" page for this plugin
-     *
+     * Generate the plugins pages on the admin dashboard.
      * @since 1.0.0
      */
-	public function create_admin_page()
+	public function create_admin_pages()
     {
-        add_menu_page('TODO Main', 'Admin TODO', 'manage_options', 'wp-admin-todo-main', [$this, 'main_page_init'], 'dashicons-edit');
+        add_menu_page('TODO Settings', 'Admin TODO', 'manage_options', 'wp-admin-todo-settings', [$this, 'main_page_init'], 'dashicons-edit');
+        add_submenu_page('wp-admin-todo-settings' , 'Create List', 'Create a TODO List', 'manage_options', 'wp-admin-todo-create-list', [$this, 'create_list_page_init']);
     }
 
     /**
      * PHP View for TODO MAIN
-     *
      * @since 1.0.0
      */
     public function main_page_init()
     {
         include_once 'partials/wp-admin-todo-admin-display.php';
+    }
+
+    /**
+     * PHP View for Create TODO List page
+     * @since 2.0.0
+     */
+    public function create_list_page_init()
+    {
+        include_once 'partials/wp-admin-todo-admin-create-list-display.php';
     }
 
     public function register_custom_posts()

@@ -14,68 +14,78 @@
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<h1 class="text-primary">TODO</h1>
+<h1 class="text-primary">WordPress Admin TODO</h1>
+
+<!--Create Lists-->
+
+<!--CREATE NEW LIST TOGGLE-->
+<button id="todo-new-list" class="btn btn-outline-primary btn-small">
+    Create New list
+</button>
+
 
 <!--DISPLAY CURRENT TODO LIST-->
-<ul>
-    <?php
-        $posts = get_posts(
-                array(
-                    'post_type'        => 'wp-admin-todo',
-                    'post_status'      => array( 'open', 'finished' ),
-                    'orderby'          => 'date',
-                    'order'            => 'DESC',
-                    'suppress_filters' => true,
-                )
-            );
-
-        if ( count($posts) ) {
-            foreach( $posts as $post) {
-    ?>
-
-        <li>
-            <input type="checkbox"
-                   class="todo-item-checkbox"
-                   id="todo-item-checkbox-<?php echo $post->ID ?>"
-                   data-id="<?php echo $post->ID ?>"
-                   <?php echo $post->post_status === 'finished' ? 'checked' : ''; ?>
-            >
-            <input type="text"
-                   disabled
-                   value="<?php echo $post->post_content; ?>"
-                   id="todo-item-<?php echo $post->ID ?>"
-                   class="todo-item"
-                   data-id="<?php echo $post->ID ?>"
-            >
-            <button id="todo-item-edit-<?php echo $post->ID ?>"
-                    class="btn btn-outline-warning btn-small todo-item-edit-button"
-                    data-toggle="inactive"
-                    data-id="<?php echo $post->ID ?>"
-            >
-                <span class="dashicons dashicons-edit"></span>
-            </button>
-            <button id="todo-item-remove-<?php echo $post->ID ?>"
-                    class="btn btn-outline-danger btn-small todo-item-delete-button"
-                    data-id="<?php echo $post->ID ?>"
-            >
-                <span class="dashicons dashicons-trash"></span>
-            </button>
-        </li>
-
-    <?php
-            }
-        }
-    ?>
-</ul>
+<!--<ul>-->
+<!--    --><?php
+//        $posts = get_posts(
+//                array(
+//                    'post_type'        => 'wp-admin-todo',
+//                    'post_status'      => array( 'open', 'finished' ),
+//                    'orderby'          => 'date',
+//                    'order'            => 'DESC',
+//                    'suppress_filters' => true,
+//                )
+//            );
+//
+//        if ( count($posts) ) {
+//            foreach( $posts as $post) {
+//    ?>
+<!---->
+<!--        <li>-->
+<!--            <input type="checkbox"-->
+<!--                   class="todo-item-checkbox"-->
+<!--                   id="todo-item-checkbox---><?php //echo $post->ID ?><!--"-->
+<!--                   data-id="--><?php //echo $post->ID ?><!--"-->
+<!--                   --><?php //echo $post->post_status === 'finished' ? 'checked' : ''; ?>
+<!--            >-->
+<!--            <input type="text"-->
+<!--                   disabled-->
+<!--                   value="--><?php //echo $post->post_content; ?><!--"-->
+<!--                   id="todo-item---><?php //echo $post->ID ?><!--"-->
+<!--                   class="todo-item"-->
+<!--                   data-id="--><?php //echo $post->ID ?><!--"-->
+<!--            >-->
+<!--            <button id="todo-item-edit---><?php //echo $post->ID ?><!--"-->
+<!--                    class="btn btn-outline-warning btn-small todo-item-edit-button"-->
+<!--                    data-toggle="inactive"-->
+<!--                    data-id="--><?php //echo $post->ID ?><!--"-->
+<!--            >-->
+<!--                <span class="dashicons dashicons-edit"></span>-->
+<!--            </button>-->
+<!--            <button id="todo-item-remove---><?php //echo $post->ID ?><!--"-->
+<!--                    class="btn btn-outline-danger btn-small todo-item-delete-button"-->
+<!--                    data-id="--><?php //echo $post->ID ?><!--"-->
+<!--            >-->
+<!--                <span class="dashicons dashicons-trash"></span>-->
+<!--            </button>-->
+<!--        </li>-->
+<!---->
+<!--    --><?php
+//            }
+//        }
+//    ?>
+<!--</ul>-->
 
 <!--ADD FUNCTION-->
-<input type="text" id="add-content-input">
-<button id="todo-add-button" class="btn btn-outline-primary btn-small">+</button>
-
+<!--<input type="text" id="add-content-input">-->
+<!--<button id="todo-add-button" class="btn btn-outline-primary btn-small">+</button>-->
+<!---->
 <script>
 
     // AJAX URL
     const ajaxUrl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
+
+    // CREATE LISTS
 
     // ADD ITEM
     const addButton = document.getElementById('todo-add-button');
