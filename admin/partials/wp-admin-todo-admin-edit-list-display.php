@@ -60,7 +60,12 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
             body:   formData
         });
 
-        const { data } = await res.json();
+        const { success, data } = await res.json();
+
+        // if successful payload, return data
+        if (success) {
+            console.log(data);
+        }
 
     });
 

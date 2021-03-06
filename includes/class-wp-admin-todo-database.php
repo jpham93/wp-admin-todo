@@ -94,7 +94,7 @@ class Wp_Admin_Todo_Database
     {
         $res = null;
 
-        $sql = sprintf("SELECT * FROM %s", $this->lists_table );
+        $sql = "SELECT * FROM $this->lists_table";
 
         try
         {
@@ -119,17 +119,33 @@ class Wp_Admin_Todo_Database
     {
         $res = null;
 
-        $sql = sprintf("
-            SELECT * FROM %s
+        $sql = $this->wpdb->prepare("
+            SELECT * FROM $this->lists_table
             WHERE id = %d
-        ", $this->lists_table, $list_ID );
+        ", $list_ID );
 
         try
         {
-            $res = $this->wpdb->get_results(
+            $res = $this->wpdb->get_row(
                 $sql,
                 OBJECT
             );
+
+            // if successful list, retrieve items
+            if ( $res ) {
+
+                $items_res = null;
+
+                $items_sql = $this->wpdb->prepare("
+                    SELECT * FROM $this->items_table
+                    WHERE list_id = %d
+                ", $list_ID );
+
+                $items_res = $this->wpdb->get_results( $items_sql );
+
+                $res->items = $items_res;
+            }
+
         }
         catch (Exception $e)
         {

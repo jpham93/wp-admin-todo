@@ -259,7 +259,7 @@ class Wp_Admin_Todo_Admin {
      */
     public function read_list()
     {
-        $list_ID = $_POST['list-ID'];
+        $list_ID = (int) $_POST['list-ID'];
 
         $res = $this->database->read_list( $list_ID );
 
