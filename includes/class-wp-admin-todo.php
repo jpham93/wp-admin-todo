@@ -158,11 +158,15 @@ class Wp_Admin_Todo {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
         $this->loader->add_action('admin_menu', $plugin_admin, 'create_admin_pages');
 
-        $this->loader->add_action( 'init', $plugin_admin, 'register_custom_posts');         // register custom post types for adding/removing
+        $this->loader->add_action( 'init', $plugin_admin, 'register_custom_posts');
 
-        $this->loader->add_action( 'wp_ajax_add_todo', $plugin_admin, 'add_todo');       // register custom post types for adding/removing
+        // list AJAX handlers
+        $this->loader->add_action( 'wp_ajax_create_list', $plugin_admin, 'create_list' );
+
+        // singular item AJAX handlers
+        $this->loader->add_action( 'wp_ajax_create_todo', $plugin_admin, 'create_todo');
         $this->loader->add_action( 'wp_ajax_edit_todo', $plugin_admin, 'edit_todo');
-        $this->loader->add_action( 'wp_ajax_delete_todo', $plugin_admin, 'delete_todo');    // register custom post types for adding/removing
+        $this->loader->add_action( 'wp_ajax_delete_todo', $plugin_admin, 'delete_todo');
 
 	}
 
