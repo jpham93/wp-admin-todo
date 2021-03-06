@@ -56,26 +56,31 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
 
     listSelector.addEventListener('change', async function() {
 
-        const listID = this.value;
+        const listID = Number(this.value);
 
-        // payload
-        const formData = new FormData();
-        formData.append('action', 'read_list');
-        formData.append('list-ID', listID);
+        if (listID > 0) {
+            // payload
+            const formData = new FormData();
+            formData.append('action', 'read_list');
+            formData.append('list-ID', listID);
 
-        const res = await fetch(ajaxUrl, {
-            method: 'POST',
-            body:   formData
-        });
+            const res = await fetch(ajaxUrl, {
+                method: 'POST',
+                body:   formData
+            });
 
-        const { success, data } = await res.json();
+            const { success, data } = await res.json();
 
-        // if successful payload, return data
-        if (success) {
-            renderList(data);
+            // if successful then send
+            if (success) {
+                renderList(data);
+            } else {
+                // send error
+            }
         } else {
             const listEdit = document.getElementById('list-edit');
             listEdit.setAttribute('hidden', true);
+            clearList();
         }
 
     });
@@ -90,10 +95,10 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     const renderList = ({ id, list_name, items }) => {
 
         // show form
-        const listEdit = document.getElementById('list-edit');
+        const listEdit  = document.getElementById('list-edit');
         listEdit.removeAttribute('hidden');
 
-        const listName = document.getElementById('list-name');
+        const listName  = document.getElementById('list-name');
         listName.innerText = list_name;
 
         const listItems = document.getElementById('list-items');
@@ -106,6 +111,18 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
             const noItemsHTML = '<li>List has no current item</li>';
             listItems.insertAdjacentHTML('afterbegin', noItemsHTML);
         }
+
+    };
+
+    /**
+     * Clears list items
+     */
+    const clearList = () => {
+
+        const listItems = document.querySelectorAll('#list-items li');
+        listItems.forEach(listItem => {
+            listItem.remove();
+        });
 
     };
 
