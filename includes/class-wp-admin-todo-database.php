@@ -86,6 +86,59 @@ class Wp_Admin_Todo_Database
         }
     }
 
+    /**
+     * Retrieves ALL lists
+     * @return object[]|null
+     */
+    public function get_lists()
+    {
+        $res = null;
+
+        $sql = sprintf("SELECT * FROM %s", $this->lists_table );
+
+        try
+        {
+            $res = $this->wpdb->get_results( $sql, OBJECT );
+        }
+        catch (Exception $e)
+        {
+            error_log($e);
+            echo $e;
+        }
+
+        return $res;
+    }
+
+    /**
+     * Read an existing list using ID
+     * @param $list_ID  int
+     * @return array|object|null
+     */
+    public function read_list( $list_ID )
+    {
+        $res = null;
+
+        $sql = $this->wpdb->prepare("
+            SELECT * FROM %s
+            WHERE id = %d
+        ", $this->lists_table, $list_ID );
+
+        try
+        {
+            $res = $this->wpdb->get_results(
+                $this->wpdb->prepare( $sql ),
+                ARRAY_A
+            );
+        }
+        catch (Exception $e)
+        {
+            error_log($e);
+            echo $e;
+        }
+
+        return $res;
+    }
+
 
     /*********
      * ITEMS *

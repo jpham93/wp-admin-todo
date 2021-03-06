@@ -10,7 +10,7 @@
  * @subpackage Wp_Admin_Todo/admin
  */
 
-require_once( plugin_dir_path( __DIR__ ) . '/includes/class-wp-admin-todo-database.php' );
+require_once( plugin_dir_path( __DIR__ ) . 'includes/class-wp-admin-todo-database.php' );
 
 /**
  * The admin-specific functionality of the plugin.
@@ -119,7 +119,8 @@ class Wp_Admin_Todo_Admin {
 	public function create_admin_pages()
     {
         add_menu_page('TODO Settings', 'Admin TODO', 'manage_options', 'wp-admin-todo-settings', [$this, 'main_page_init'], 'dashicons-edit');
-        add_submenu_page('wp-admin-todo-settings' , 'Create List', 'Create a TODO List', 'manage_options', 'wp-admin-todo-create-list', [$this, 'create_list_page_init']);
+        add_submenu_page('wp-admin-todo-settings' , 'Create List', 'Create a List', 'manage_options', 'wp-admin-todo-create-list', [$this, 'create_list_page_init']);
+        add_submenu_page('wp-admin-todo-settings' , 'Edit List', 'Edit List', 'manage_options', 'wp-admin-todo-edit-list', [$this, 'edit_list_page_init']);
     }
 
     /**
@@ -138,6 +139,15 @@ class Wp_Admin_Todo_Admin {
     public function create_list_page_init()
     {
         include_once 'partials/wp-admin-todo-admin-create-list-display.php';
+    }
+
+    /**
+     * PHP View for Create TODO List page
+     * @since 2.0.0
+     */
+    public function edit_list_page_init()
+    {
+        include_once 'partials/wp-admin-todo-admin-edit-list-display.php';
     }
 
     public function register_custom_posts()

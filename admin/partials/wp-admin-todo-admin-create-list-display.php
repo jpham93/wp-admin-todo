@@ -11,8 +11,8 @@
 ?>
 <h1>Create a New List</h1>
 
-<div class="container ml-0">
-    <div class="col-md-4">
+<div class="container-fluid ml-0">
+    <div class="col-md-2">
         <label for="todo-new-list" class="form-label">New List Name</label>
         <input type="text" id="todo-new-list-input" class="form-control">
 
