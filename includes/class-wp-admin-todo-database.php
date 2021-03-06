@@ -110,15 +110,16 @@ class Wp_Admin_Todo_Database
     }
 
     /**
-     * Read an existing list using ID
+     * Read an existing list with list ID. Also retrieve all list todo items
+     * and return in the same payload.
      * @param $list_ID  int
-     * @return array|object|null
+     * @return |null
      */
     public function read_list( $list_ID )
     {
         $res = null;
 
-        $sql = $this->wpdb->prepare("
+        $sql = sprintf("
             SELECT * FROM %s
             WHERE id = %d
         ", $this->lists_table, $list_ID );
@@ -126,8 +127,8 @@ class Wp_Admin_Todo_Database
         try
         {
             $res = $this->wpdb->get_results(
-                $this->wpdb->prepare( $sql ),
-                ARRAY_A
+                $sql,
+                OBJECT
             );
         }
         catch (Exception $e)
@@ -145,6 +146,7 @@ class Wp_Admin_Todo_Database
      *********/
 
     /**
+     * Create a single TODO item
      * @param $list_ID          int
      * @param $item_content     string
      */

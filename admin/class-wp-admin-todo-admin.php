@@ -242,7 +242,7 @@ class Wp_Admin_Todo_Admin {
     }
 
     /**
-     *
+     * CREATES TODO ITEM
      */
     public function create_list()
     {
@@ -252,6 +252,18 @@ class Wp_Admin_Todo_Admin {
 
         $this->database->create_list( $list_name );
 
+    }
+
+    /**
+     * READS A SINGLE LIST W/ LIST ID
+     */
+    public function read_list()
+    {
+        $list_ID = $_POST['list-ID'];
+
+        $res = $this->database->read_list( $list_ID );
+
+        wp_send_json_success( $res );
     }
 
 }

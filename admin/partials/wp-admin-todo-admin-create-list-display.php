@@ -39,10 +39,12 @@
         formData.append('action', 'create_list');
         formData.append('list-name', listName);
 
-        await fetch(ajaxUrl, {
+        const res = await fetch(ajaxUrl, {
            method:  'POST',
            body:    formData
         });
+
+        // @todo - flash list created (success message)
 
     });
 

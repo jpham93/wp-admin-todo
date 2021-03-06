@@ -162,6 +162,7 @@ class Wp_Admin_Todo {
 
         // list AJAX handlers
         $this->loader->add_action( 'wp_ajax_create_list', $plugin_admin, 'create_list' );
+        $this->loader->add_action( 'wp_ajax_read_list', $plugin_admin, 'read_list' );
 
         // singular item AJAX handlers
         $this->loader->add_action( 'wp_ajax_create_todo', $plugin_admin, 'create_todo');
