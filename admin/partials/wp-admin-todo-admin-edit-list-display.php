@@ -46,10 +46,17 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     <ul id="list-items">
 
     </ul>
+    <button class="btn btn-outline-primary" id="list-edit-add-item">
+        Add New Item
+    </button>
 </div>
 
 <script>
     const ajaxUrl = '<?php echo admin_url( 'admin-ajax.php' ) ?>';
+
+    /*****************
+     * LIST SELECTOR *
+     *****************/
 
     // show edit form if list is selected
     const listSelector = document.getElementById('list-edit-dropdown');
@@ -101,7 +108,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         const listName  = document.getElementById('list-name');
         listName.innerText = list_name;
 
-        const listItems = document.getElementById('list-items');
+        const list = document.getElementById('list-items');
 
         if (items.length) {
             for (const item of items) {
@@ -109,7 +116,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
             }
         } else {
             const noItemsHTML = '<li>List has no current item</li>';
-            listItems.insertAdjacentHTML('afterbegin', noItemsHTML);
+            list.insertAdjacentHTML('afterbegin', noItemsHTML);
         }
 
     };
@@ -125,5 +132,33 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         });
 
     };
+
+    // Inject Add New Item input
+    const addNewItemButton = document.getElementById('list-edit-add-item');
+
+    /*********
+     * ITEMS *
+     *********/
+
+    addNewItemButton.addEventListener('click', function() {
+
+        const newItemInput = `
+            <li>
+                <div class="input-group mt-3">
+                    <button class="btn btn-danger">
+                        <span class="dashicons dashicons-no-alt"></span>
+                    </button>
+                    <input type="text" placeholder="New TODO Item...">
+                    <button class="btn btn-outline-success item-create-button">
+                        Create
+                    </button>
+                </div>
+            </li>
+        `;
+
+        const list = document.getElementById('list-items');
+        list.insertAdjacentHTML('beforeend', newItemInput);
+
+    });
 
 </script>
