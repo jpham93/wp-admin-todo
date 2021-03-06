@@ -10,6 +10,8 @@
  * @subpackage Wp_Admin_Todo/admin
  */
 
+require_once( plugin_dir_path( __DIR__ ) . '/includes/class-wp-admin-todo-database.php' );
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -40,6 +42,13 @@ class Wp_Admin_Todo_Admin {
 	 */
 	private $version;
 
+    /**
+     * @since   2.0.0
+     * @access  private
+     * @var     Wp_Admin_Todo_Database  ORM representation of this plugin
+     */
+	private $database;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -49,8 +58,9 @@ class Wp_Admin_Todo_Admin {
 	 */
 	public function __construct( $plugin_name, $version ) {
 
-		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+		$this->plugin_name  = $plugin_name;
+		$this->version      = $version;
+		$this->database     = new Wp_Admin_Todo_Database();
 
 	}
 
@@ -161,7 +171,7 @@ class Wp_Admin_Todo_Admin {
     /**
      * ADD A TODO ITEM
      */
-    public function add_todo()
+    public function create_todo()
     {
         $content    = $_POST['todo-content'];
         $status     = $_POST['todo-status'];
@@ -219,6 +229,19 @@ class Wp_Admin_Todo_Admin {
         $post_ID    = $_POST['todo-ID'];
 
         wp_delete_post( $post_ID );
+    }
+
+    /**
+     *
+     */
+    public function create_list()
+    {
+        $list_name = $_POST['list-name'];
+
+        echo $list_name;
+
+        $this->database->create_list( $list_name );
+
     }
 
 }

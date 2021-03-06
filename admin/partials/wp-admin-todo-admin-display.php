@@ -97,7 +97,7 @@
         const formData  = new FormData();
 
         // AJAX route
-        formData.append('action', 'add_todo');
+        formData.append('action', 'create_todo');
 
         // attach payload
         formData.append('todo-content', content);
