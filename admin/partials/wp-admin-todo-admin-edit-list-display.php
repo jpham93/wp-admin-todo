@@ -40,6 +40,14 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     ?>
 </select>
 
+<div id="list-edit" class="mt-3" hidden>
+
+    <h2 id="list-name"></h2>
+    <ul id="list-items">
+
+    </ul>
+</div>
+
 <script>
     const ajaxUrl = '<?php echo admin_url( 'admin-ajax.php' ) ?>';
 
@@ -64,9 +72,41 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
 
         // if successful payload, return data
         if (success) {
-            console.log(data);
+            renderList(data);
+        } else {
+            const listEdit = document.getElementById('list-edit');
+            listEdit.setAttribute('hidden', true);
         }
 
     });
+
+
+    /**
+     * Injects the list data into editing
+     * @param id            {number}
+     * @param list_name     {string}
+     * @param items         { { id: number, content: string, completed: boolean, list_id: number }[] }
+     */
+    const renderList = ({ id, list_name, items }) => {
+
+        // show form
+        const listEdit = document.getElementById('list-edit');
+        listEdit.removeAttribute('hidden');
+
+        const listName = document.getElementById('list-name');
+        listName.innerText = list_name;
+
+        const listItems = document.getElementById('list-items');
+
+        if (items.length) {
+            for (const item of items) {
+
+            }
+        } else {
+            const noItemsHTML = '<li>List has no current item</li>';
+            listItems.insertAdjacentHTML('afterbegin', noItemsHTML);
+        }
+
+    };
 
 </script>
