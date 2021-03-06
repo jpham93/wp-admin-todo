@@ -60,9 +60,13 @@ class Wp_Admin_Todo_Database
         dbDelta( $items_table_sql );
     }
 
+    /*********
+     * LISTS *
+     *********/
+
     /**
      * Insert a new list record into wp_admin_todo_lists
-     * @param $list_name <string>
+     * @param $list_name    string
      */
     public function create_list( $list_name )
     {
@@ -72,6 +76,34 @@ class Wp_Admin_Todo_Database
                 $this->lists_table,
                 array(
                     'list_name' => $list_name,
+                )
+            );
+        }
+        catch (Exception $e)
+        {
+            error_log($e);
+            echo $e;
+        }
+    }
+
+
+    /*********
+     * ITEMS *
+     *********/
+
+    /**
+     * @param $list_ID          int
+     * @param $item_content     string
+     */
+    public function create_todo( $list_ID, $item_content )
+    {
+        try
+        {
+            $this->wpdb->insert(
+                $this->items_table,
+                array(
+                    'content' => $item_content,
+                    'list_id' => $list_ID
                 )
             );
         }
