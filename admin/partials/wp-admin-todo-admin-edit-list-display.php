@@ -100,7 +100,6 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
      * @param items         { { id: number, content: string, completed: boolean, list_id: number }[] }
      */
     const renderList = ({ id, list_name, items }) => {
-
         // show form
         const listEdit  = document.getElementById('list-edit');
         listEdit.removeAttribute('hidden');
@@ -118,34 +117,31 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
             const noItemsHTML = '<li>List has no current item</li>';
             list.insertAdjacentHTML('afterbegin', noItemsHTML);
         }
-
     };
 
     /**
      * Clears list items
      */
     const clearList = () => {
-
         const listItems = document.querySelectorAll('#list-items li');
         listItems.forEach(listItem => {
             listItem.remove();
         });
-
     };
-
-    // Inject Add New Item input
-    const addNewItemButton = document.getElementById('list-edit-add-item');
 
     /*********
      * ITEMS *
      *********/
+
+    // Inject Add New Item input
+    const addNewItemButton = document.getElementById('list-edit-add-item');
 
     addNewItemButton.addEventListener('click', function() {
 
         const newItemInput = `
             <li>
                 <div class="input-group mt-3">
-                    <button class="btn btn-danger">
+                    <button class="btn btn-danger item-cancel-buttons" onclick="removeListItem(this);">
                         <span class="dashicons dashicons-no-alt"></span>
                     </button>
                     <input type="text" placeholder="New TODO Item...">
@@ -160,5 +156,15 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         list.insertAdjacentHTML('beforeend', newItemInput);
 
     });
+
+    /**
+     * Removes current list item for adding new TODO item
+     * @param cancelButton {HTMLElement}
+     */
+    function removeListItem(cancelButton) {
+        console.log(cancelButton);
+        const liElem = cancelButton.parentNode.parentNode;
+        liElem.remove();
+    }
 
 </script>
