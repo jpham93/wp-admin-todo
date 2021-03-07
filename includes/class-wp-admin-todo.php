@@ -165,9 +165,9 @@ class Wp_Admin_Todo {
         $this->loader->add_action( 'wp_ajax_read_list', $plugin_admin, 'read_list' );
 
         // singular item AJAX handlers
-        $this->loader->add_action( 'wp_ajax_create_todo', $plugin_admin, 'create_todo');
-        $this->loader->add_action( 'wp_ajax_edit_todo', $plugin_admin, 'edit_todo');
-        $this->loader->add_action( 'wp_ajax_delete_todo', $plugin_admin, 'delete_todo');
+        $this->loader->add_action( 'wp_ajax_create_item', $plugin_admin, 'create_item');
+        $this->loader->add_action( 'wp_ajax_edit_item', $plugin_admin, 'edit_item');
+        $this->loader->add_action( 'wp_ajax_delete_item', $plugin_admin, 'delete_item');
 
 	}
 

@@ -49,6 +49,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     <button class="btn btn-outline-primary" id="list-edit-add-item">
         Add New Item
     </button>
+    <input type="hidden" id="list-id">
 </div>
 
 <script>
@@ -64,6 +65,8 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     listSelector.addEventListener('change', async function() {
 
         const listID = Number(this.value);
+
+        clearList();
 
         if (listID > 0) {
             // payload
@@ -87,7 +90,6 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         } else {
             const listEdit = document.getElementById('list-edit');
             listEdit.setAttribute('hidden', true);
-            clearList();
         }
 
     });
@@ -101,20 +103,27 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
      */
     const renderList = ({ id, list_name, items }) => {
         // show form
-        const listEdit  = document.getElementById('list-edit');
+        const listEdit      = document.getElementById('list-edit');
         listEdit.removeAttribute('hidden');
 
-        const listName  = document.getElementById('list-name');
-        listName.innerText = list_name;
+        const listName      = document.getElementById('list-name');
+        listName.innerText  = list_name;
+
+        const hiddenInput   = document.getElementById('list-id');
+        hiddenInput.value   = id;
 
         const list = document.getElementById('list-items');
 
         if (items.length) {
-            for (const item of items) {
+            // remove message if previously exist
+            const noItemsMessage = document.getElementById('no-list-items');
+            noItemsMessage && noItemsMessage.remove();
 
+            for (const { id, content, completed } of items) {
+                injectListItem(content);
             }
         } else {
-            const noItemsHTML = '<li>List has no current item</li>';
+            const noItemsHTML = '<li id="no-list-items">List has no current item</li>';
             list.insertAdjacentHTML('afterbegin', noItemsHTML);
         }
     };
@@ -145,7 +154,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
                         <span class="dashicons dashicons-no-alt"></span>
                     </button>
                     <input type="text" placeholder="New TODO Item...">
-                    <button class="btn btn-outline-success item-create-button">
+                    <button class="btn btn-outline-success item-create-button" onclick="createListItem(this);">
                         Create
                     </button>
                 </div>
@@ -158,13 +167,73 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     });
 
     /**
-     * Removes current list item for adding new TODO item
-     * @param cancelButton {HTMLElement}
+     * Removes current list item from <ul>
+     * @param element {HTMLElement} - should be cancel or create button
      */
-    function removeListItem(cancelButton) {
-        console.log(cancelButton);
-        const liElem = cancelButton.parentNode.parentNode;
+    function removeListItem(element) {
+        const liElem = element.closest('li');
         liElem.remove();
+    }
+
+    /**
+     * Creates a new list item
+     * @param createButton
+     */
+    async function createListItem(createButton) {
+        createButton.innerHTML = `
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+        `;
+
+        const hiddenInput = document.getElementById('list-id');
+        const listID      = hiddenInput.value;
+
+        // extract new contents
+        const newItemInput = createButton.previousElementSibling;
+        const content      = newItemInput.value;
+
+        // payload
+        const formData = new FormData();
+        formData.append('action', 'create_item');
+        formData.append('list-ID', listID);
+        formData.append('content', content);
+
+        const res = await fetch(ajaxUrl, {
+            method: 'POST',
+            body:   formData
+        })
+
+        const { success } = await res.json();
+
+        if (success) {
+
+            removeListItem(createButton);
+            injectListItem(content);
+
+        } else {
+            // error message
+
+        }
+
+    }
+
+    /**
+     * This is used after a list item has been created in the database
+     */
+    function injectListItem(content) {
+
+        // remove message if previously exist
+        const noItemsMessage = document.getElementById('no-list-items');
+        noItemsMessage && noItemsMessage.remove();
+
+        const list = document.getElementById('list-items');
+        list.insertAdjacentHTML('beforeend', `
+            <li>
+                <span class="col-4">${content}</span>
+            </li>
+        `);
+
     }
 
 </script>

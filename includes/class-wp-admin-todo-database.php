@@ -165,12 +165,15 @@ class Wp_Admin_Todo_Database
      * Create a single TODO item
      * @param $list_ID          int
      * @param $item_content     string
+     * @return int|boolean
      */
-    public function create_todo( $list_ID, $item_content )
+    public function create_item( $list_ID, $item_content )
     {
+        $res = false;
+
         try
         {
-            $this->wpdb->insert(
+            $res = $this->wpdb->insert(
                 $this->items_table,
                 array(
                     'content' => $item_content,
@@ -183,6 +186,8 @@ class Wp_Admin_Todo_Database
             error_log($e);
             echo $e;
         }
+
+        return $res;
     }
 
 }

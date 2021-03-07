@@ -181,18 +181,18 @@ class Wp_Admin_Todo_Admin {
     /**
      * ADD A TODO ITEM
      */
-    public function create_todo()
+    public function create_item()
     {
-        $content    = $_POST['todo-content'];
-        $status     = $_POST['todo-status'];
+        $content    = $_POST['content'];
+        $list_ID    = (int) $_POST['list-ID'];
 
-        $postarr = array(
-            'post_type'    => 'wp-admin-todo',
-            'post_content' => $content,
-            'post_status'  => $status
-        );
+        $res = $this->database->create_item( $list_ID, $content );
 
-        wp_insert_post( $postarr );
+        if ( $res ) {
+            wp_send_json_success( $res );
+        } else {
+            wp_send_json_error();
+        }
     }
 
     /**
@@ -201,7 +201,7 @@ class Wp_Admin_Todo_Admin {
      *  1. Change status of the item (if status is defined)
      *  2. Change the content of the item (if content is defined)
      */
-    public function edit_todo()
+    public function edit_item()
     {
 //        $content    = $_POST['todo-content'];
 //        $status     = $_POST['todo-status'];
@@ -234,7 +234,7 @@ class Wp_Admin_Todo_Admin {
     /**
      * DELETES TODO ITEM
      */
-    public function delete_todo()
+    public function delete_item()
     {
         $post_ID    = $_POST['todo-ID'];
 
@@ -248,9 +248,13 @@ class Wp_Admin_Todo_Admin {
     {
         $list_name = $_POST['list-name'];
 
-        echo $list_name;
+        $res = $this->database->create_list( $list_name );
 
-        $this->database->create_list( $list_name );
+        if ( $res ) {
+            wp_send_json_success( $res );
+        } else {
+            wp_send_json_error();
+        }
 
     }
 
@@ -263,7 +267,11 @@ class Wp_Admin_Todo_Admin {
 
         $res = $this->database->read_list( $list_ID );
 
-        wp_send_json_success( $res );
+        if ( $res ) {
+            wp_send_json_success( $res );
+        } else {
+            wp_send_json_error();
+        }
     }
 
 }
