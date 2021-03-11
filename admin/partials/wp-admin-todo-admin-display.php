@@ -5,11 +5,13 @@
  * MAIN TODO APP
  *
  * @link       https://jamespham.io
- * @since      1.0.0
+ * @since      2.0.0
  *
  * @package    Wp_Admin_Todo
  * @subpackage Wp_Admin_Todo/admin/partials
  */
+
+require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admin-todo-database.php' );
 ?>
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
@@ -22,210 +24,263 @@
     Create New list
 </button>
 
+<div id="todo-new-list-container" class="my-3">
+    <h2>Create a New List</h2>
+    <div class="container-fluid ml-0">
+        <div class="col-md-2">
+            <label for="todo-new-list" class="form-label">New List Name</label>
+            <input type="text" id="todo-new-list-input" class="form-control">
 
-<!--DISPLAY CURRENT TODO LIST-->
-<!--<ul>-->
-<!--    --><?php
-//        $posts = get_posts(
-//                array(
-//                    'post_type'        => 'wp-admin-todo',
-//                    'post_status'      => array( 'open', 'finished' ),
-//                    'orderby'          => 'date',
-//                    'order'            => 'DESC',
-//                    'suppress_filters' => true,
-//                )
-//            );
-//
-//        if ( count($posts) ) {
-//            foreach( $posts as $post) {
-//    ?>
-<!---->
-<!--        <li>-->
-<!--            <input type="checkbox"-->
-<!--                   class="todo-item-checkbox"-->
-<!--                   id="todo-item-checkbox---><?php //echo $post->ID ?><!--"-->
-<!--                   data-id="--><?php //echo $post->ID ?><!--"-->
-<!--                   --><?php //echo $post->post_status === 'finished' ? 'checked' : ''; ?>
-<!--            >-->
-<!--            <input type="text"-->
-<!--                   disabled-->
-<!--                   value="--><?php //echo $post->post_content; ?><!--"-->
-<!--                   id="todo-item---><?php //echo $post->ID ?><!--"-->
-<!--                   class="todo-item"-->
-<!--                   data-id="--><?php //echo $post->ID ?><!--"-->
-<!--            >-->
-<!--            <button id="todo-item-edit---><?php //echo $post->ID ?><!--"-->
-<!--                    class="btn btn-outline-warning btn-small todo-item-edit-button"-->
-<!--                    data-toggle="inactive"-->
-<!--                    data-id="--><?php //echo $post->ID ?><!--"-->
-<!--            >-->
-<!--                <span class="dashicons dashicons-edit"></span>-->
-<!--            </button>-->
-<!--            <button id="todo-item-remove---><?php //echo $post->ID ?><!--"-->
-<!--                    class="btn btn-outline-danger btn-small todo-item-delete-button"-->
-<!--                    data-id="--><?php //echo $post->ID ?><!--"-->
-<!--            >-->
-<!--                <span class="dashicons dashicons-trash"></span>-->
-<!--            </button>-->
-<!--        </li>-->
-<!---->
-<!--    --><?php
-//            }
-//        }
-//    ?>
-<!--</ul>-->
+            <button id="todo-new-list-create" class="btn btn-outline-success mt-3 mr-0">
+                Create
+            </button>
+        </div>
+    </div>
+</div>
 
-<!--ADD FUNCTION-->
-<!--<input type="text" id="add-content-input">-->
-<!--<button id="todo-add-button" class="btn btn-outline-primary btn-small">+</button>-->
+<!-- Dropdown of lists to edit -->
+<div id="todo-list-container" class="my-3">
+
+    <?php
+    $database   = new Wp_Admin_Todo_Database();
+    $todo_lists = $database->get_lists();
+
+
+
+    // display empty if retrieval is empty
+    if ( ! count( $todo_lists ) ) {
+
+        printf( '<h4>%s</h4>', 'No lists available' );
+
+    } else {
+
+        // display each row as an option
+        foreach ( $todo_lists as $list )
+        {
+            printf( '<option value="%d">%s</option>', $list->id, $list->list_name );
+        }
+
+    }
+    ?>
+
+</div>
+
+<!--<div id="list-edit" class="mt-3" hidden>-->
 <!---->
+<!--    <h2 id="list-name"></h2>-->
+<!--    <ul id="list-items">-->
+<!---->
+<!--    </ul>-->
+<!--    <button class="btn btn-outline-primary" id="list-edit-add-item">-->
+<!--        Add New Item-->
+<!--    </button>-->
+<!--    <input type="hidden" id="list-id">-->
+<!--</div>-->
+
 <script>
+    const ajaxUrl = '<?php echo admin_url( 'admin-ajax.php' ) ?>';
 
-    // AJAX URL
-    const ajaxUrl = '<?php echo admin_url( 'admin-ajax.php' ); ?>';
+    /*********
+     * LISTS *
+     *********/
 
-    // CREATE LISTS
+        // show edit form if list is selected
+    const listSelector = document.getElementById('list-edit-dropdown');
 
-    // ADD ITEM
-    const addButton = document.getElementById('todo-add-button');
+    listSelector.addEventListener('change', async function() {
 
-    addButton.addEventListener('click', async function(e) {
+        const listID = Number(this.value);
 
-        const content = document.getElementById('add-content-input').value;
+        clearList();
 
-        // send as form data instead of JSON (catch via $_POST)
-        const formData  = new FormData();
+        if (listID > 0) {
+            // payload
+            const formData = new FormData();
+            formData.append('action', 'read_list');
+            formData.append('list-ID', listID);
 
-        // AJAX route
-        formData.append('action', 'create_todo');
+            const res = await fetch(ajaxUrl, {
+                method: 'POST',
+                body:   formData
+            });
 
-        // attach payload
-        formData.append('todo-content', content);
-        formData.append('todo-status', 'open');
+            const { success, data } = await res.json();
 
-        // don't worry about response for now
-        await fetch(ajaxUrl, {
+            // if successful then send
+            if (success) {
+                renderList(data);
+            } else {
+                // send error
+            }
+        } else {
+            const listEdit = document.getElementById('list-edit');
+            listEdit.setAttribute('hidden', true);
+        }
+
+    });
+
+    // CREATE LIST
+    const createButton = document.getElementById('todo-new-list-create');
+
+    createButton.addEventListener('click', async function() {
+
+        // extract value
+        const newListInput  = document.getElementById('todo-new-list-input');
+        const listName      = newListInput.value;
+
+        // create payload
+        const formData      = new FormData();
+        formData.append('action', 'create_list');
+        formData.append('list-name', listName);
+
+        const res = await fetch(ajaxUrl, {
+            method:  'POST',
+            body:    formData
+        });
+
+        // @todo - flash list created (success message)
+
+    });
+
+    /**
+     * Injects the list data into editing
+     * @param id            {number}
+     * @param list_name     {string}
+     * @param items         { { id: number, content: string, completed: boolean, list_id: number }[] }
+     */
+    const renderList = ({ id, list_name, items }) => {
+        // show form
+        const listEdit      = document.getElementById('list-edit');
+        listEdit.removeAttribute('hidden');
+
+        const listName      = document.getElementById('list-name');
+        listName.innerText  = list_name;
+
+        const hiddenInput   = document.getElementById('list-id');
+        hiddenInput.value   = id;
+
+        const list = document.getElementById('list-items');
+
+        if (items.length) {
+            // remove message if previously exist
+            const noItemsMessage = document.getElementById('no-list-items');
+            noItemsMessage && noItemsMessage.remove();
+
+            for (const { id, content, completed } of items) {
+                injectListItem(content);
+            }
+        } else {
+            const noItemsHTML = '<li id="no-list-items">List has no current item</li>';
+            list.insertAdjacentHTML('afterbegin', noItemsHTML);
+        }
+    };
+
+    /**
+     * Clears list items
+     */
+    const clearList = () => {
+        const listItems = document.querySelectorAll('#list-items li');
+        listItems.forEach(listItem => {
+            listItem.remove();
+        });
+    };
+
+    /*********
+     * ITEMS *
+     *********/
+
+        // Inject Add New Item input
+    const addNewItemButton = document.getElementById('list-edit-add-item');
+
+    addNewItemButton.addEventListener('click', function() {
+
+        const newItemInput = `
+            <ol>
+                <div class="input-group mt-3">
+                    <button class="btn btn-danger item-cancel-buttons" onclick="removeListItem(this);">
+                        <span class="dashicons dashicons-no-alt"></span>
+                    </button>
+                    <input type="text" placeholder="New TODO Item...">
+                    <button class="btn btn-outline-success item-create-button" onclick="createListItem(this);">
+                        Create
+                    </button>
+                </div>
+            </ol>
+        `;
+
+        const list = document.getElementById('list-items');
+        list.insertAdjacentHTML('beforeend', newItemInput);
+
+    });
+
+    /**
+     * Removes current <li>> from <ul> using a nested element
+     * @param element {HTMLElement} - should be cancel or create button
+     */
+    function removeListItem(element) {
+        const liElem = element.closest('li');
+        liElem.remove();
+    }
+
+    /**
+     * Creates a new list item
+     * @param createButton
+     */
+    async function createListItem(createButton) {
+        createButton.innerHTML = `
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+        `;
+
+        const hiddenInput = document.getElementById('list-id');
+        const listID      = hiddenInput.value;
+
+        // extract new contents
+        const newItemInput = createButton.previousElementSibling;
+        const content      = newItemInput.value;
+
+        // payload
+        const formData = new FormData();
+        formData.append('action', 'create_item');
+        formData.append('list-ID', listID);
+        formData.append('content', content);
+
+        const res = await fetch(ajaxUrl, {
             method: 'POST',
-            body: formData
-        });
+            body:   formData
+        })
 
-        // // refresh page to load new data
-        location.reload();
-    });
+        const { success } = await res.json();
 
-    // EDIT ITEM (CHECKBOXES)
-    const checkboxes = document.querySelectorAll('input.todo-item-checkbox');
+        if (success) {
 
-    checkboxes.forEach( checkbox => {
+            removeListItem(createButton);
+            injectListItem(content);
 
-        checkbox.addEventListener('click', async function() {
+        } else {
+            // error message
 
-            const status = this.checked ? 'finished' : 'open';
-            const postID = this.getAttribute('data-id')
-            const content = document.getElementById(`todo-item-${postID}`).value;     // repass content. Not enough time to do dynamic updating in AJAX route
+        }
 
-            const formData  = new FormData();
+    }
 
-            // AJAX route
-            formData.append('action', 'edit_todo');
+    /**
+     * This is used after a list item has been created in the database
+     */
+    function injectListItem(content) {
 
-            // attach payload
-            formData.append('todo-status', status);
-            formData.append('todo-ID', postID);
+        // remove message if previously exist
+        const noItemsMessage = document.getElementById('no-list-items');
+        noItemsMessage && noItemsMessage.remove();
 
-            // don't worry about response for now
-            await fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData
-            });
+        const list = document.getElementById('list-items');
+        list.insertAdjacentHTML('beforeend', `
+            <li>
+                <input value="${content}" class="col-4" disabled>
+            </li>
+        `);
 
-        });
-    });
-
-    // EDIT ITEM (CONTENT)
-    const editButtons = document.querySelectorAll('button.todo-item-edit-button');
-
-    editButtons.forEach(editButton => {
-
-        editButton.addEventListener('click', async function() {
-
-            const postID        = this.getAttribute('data-id');
-            const toggle        = this.getAttribute('data-toggle');
-            const todoInput     = document.getElementById(`todo-item-${postID}`);
-
-            // if inactive, change toggle status & allow for inline editing.
-            if (toggle === 'inactive') {
-
-                this.setAttribute('data-toggle', 'active');
-                todoInput.disabled  = false;
-
-                // change colors with state change
-                this.classList.add('btn-outline-success')
-                this.classList.remove('btn-outline-warning');
-
-            }
-            // if active, save current values to DB and disable input
-            else {
-
-                this.setAttribute('data-toggle', 'inactive');
-                todoInput.disabled  = true;
-
-                // change colors with state change
-                this.classList.add('btn-outline-warning');
-                this.classList.remove('btn-outline-success');
-
-                // save current value to DB
-                const content = todoInput.value;
-
-                const formData = new FormData();
-
-                // edit action controller
-                formData.append('action', 'edit_todo');
-
-                // edit controller
-                formData.append('todo-ID', postID);
-                formData.append('todo-content', content);       // updated content...
-
-                // don't worry about response for now
-                await fetch(ajaxUrl, {
-                    method: 'POST',
-                    body: formData
-                });
-
-            }
-
-        });
-
-    });
-
-    // DELETE ITEM
-    const deleteButton = document.querySelectorAll('.todo-item-delete-button');
-
-    deleteButton.forEach(deleteButton => {
-
-        deleteButton.addEventListener('click', async function() {
-
-            const postID = this.getAttribute('data-id')
-
-            const formData  = new FormData();
-
-            // AJAX route
-            formData.append('action', 'delete_todo');
-
-            // attach payload
-            formData.append('todo-ID', postID);
-
-            // don't worry about response for now
-            await fetch(ajaxUrl, {
-                method: 'POST',
-                body: formData
-            });
-
-            // refresh page to load new data
-            location.reload();
-
-        });
-
-    });
+    }
 
 </script>
