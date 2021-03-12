@@ -11,17 +11,32 @@
  * @package    Wp_Admin_Todo
  * @subpackage Wp_Admin_Todo/includes
  */
-
 /**
  * Class Wp_Admin_Todo_Admin_API
  *
- *
+ * REST API (admin facing only) that serves the plugin.
  *
  * @package    Wp_Admin_Todo
  * @subpackage Wp_Admin_Todo/admin
  * @author     James Pham <jamespham93@yahoo.com>
  */
 class Wp_Admin_Todo_Admin_API {
+
+    private $database;
+
+    function __construct()
+    {
+        $this->load_dependencies();
+        $this->database = new Wp_Admin_Todo_Database();
+    }
+
+    /**
+     * LOAD ANY IMPORTS
+     */
+    private function load_dependencies()
+    {
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-admin-todo-database.php';
+    }
 
     /**
      * ADD A TODO ITEM
@@ -93,6 +108,8 @@ class Wp_Admin_Todo_Admin_API {
     {
         $list_name = $_POST['list-name'];
 
+        error_log( $list_name );
+
         $res = $this->database->create_list( $list_name );
 
         if ( $res ) {
@@ -101,6 +118,7 @@ class Wp_Admin_Todo_Admin_API {
             wp_send_json_error();
         }
 
+        error_log('Open up please');
     }
 
     /**

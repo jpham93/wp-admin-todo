@@ -156,6 +156,8 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         const newListInput  = document.getElementById('todo-new-list-name');
         const listName      = newListInput.value;
 
+        console.log(listName);
+
         // create payload
         const formData      = new FormData();
         formData.append('action', 'create_list');
@@ -166,7 +168,13 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
             body:    formData
         });
 
-        // @todo - flash list created (success message)
+        console.log(res);
+
+        // @todo - flash w/ hide spinner list created (success message)
+
+        // show previous forms
+        newListForm.hidden          = true;
+        createNewListButton.hidden  = false;
 
     });
 
@@ -222,26 +230,26 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     // Inject Add New Item input
     const addNewItemButton = document.getElementById('list-edit-add-item');
 
-    addNewItemButton.addEventListener('click', function() {
-
-        const newItemInput = `
-            <ol>
-                <div class="input-group mt-3">
-                    <button class="btn btn-danger item-cancel-buttons" onclick="removeListItem(this);">
-                        <span class="dashicons dashicons-no-alt"></span>
-                    </button>
-                    <input type="text" placeholder="New TODO Item...">
-                    <button class="btn btn-outline-success item-create-button" onclick="createListItem(this);">
-                        Create
-                    </button>
-                </div>
-            </ol>
-        `;
-
-        const list = document.getElementById('list-items');
-        list.insertAdjacentHTML('beforeend', newItemInput);
-
-    });
+    // addNewItemButton.addEventListener('click', function() {
+    //
+    //     const newItemInput = `
+    //         <ol>
+    //             <div class="input-group mt-3">
+    //                 <button class="btn btn-danger item-cancel-buttons" onclick="removeListItem(this);">
+    //                     <span class="dashicons dashicons-no-alt"></span>
+    //                 </button>
+    //                 <input type="text" placeholder="New TODO Item...">
+    //                 <button class="btn btn-outline-success item-create-button" onclick="createListItem(this);">
+    //                     Create
+    //                 </button>
+    //             </div>
+    //         </ol>
+    //     `;
+    //
+    //     const list = document.getElementById('list-items');
+    //     list.insertAdjacentHTML('beforeend', newItemInput);
+    //
+    // });
 
     /**
      * Removes current <li>> from <ul> using a nested element

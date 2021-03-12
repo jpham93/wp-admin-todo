@@ -116,6 +116,11 @@ class Wp_Admin_Todo {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-wp-admin-todo-admin.php';
 
+        /**
+         * The class responsible for defining all API handlers for plugin
+         */
+        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-wp-admin-todo-admin-api.php';
+
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
@@ -152,22 +157,21 @@ class Wp_Admin_Todo {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Wp_Admin_Todo_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin       = new Wp_Admin_Todo_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin_api   = new Wp_Admin_Todo_Admin_API();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
         $this->loader->add_action('admin_menu', $plugin_admin, 'create_admin_pages');
 
-        $this->loader->add_action( 'init', $plugin_admin, 'register_custom_posts');
-
         // list AJAX handlers
-        $this->loader->add_action( 'wp_ajax_create_list', $plugin_admin, 'create_list' );
-        $this->loader->add_action( 'wp_ajax_read_list', $plugin_admin, 'read_list' );
+        $this->loader->add_action( 'wp_ajax_create_list', $plugin_admin_api, 'create_list' );
+        $this->loader->add_action( 'wp_ajax_read_list', $plugin_admin_api, 'read_list' );
 
         // singular item AJAX handlers
-        $this->loader->add_action( 'wp_ajax_create_item', $plugin_admin, 'create_item');
-        $this->loader->add_action( 'wp_ajax_edit_item', $plugin_admin, 'edit_item');
-        $this->loader->add_action( 'wp_ajax_delete_item', $plugin_admin, 'delete_item');
+        $this->loader->add_action( 'wp_ajax_create_item', $plugin_admin_api, 'create_item');
+        $this->loader->add_action( 'wp_ajax_edit_item', $plugin_admin_api, 'edit_item');
+        $this->loader->add_action( 'wp_ajax_delete_item', $plugin_admin_api, 'delete_item');
 
 	}
 
