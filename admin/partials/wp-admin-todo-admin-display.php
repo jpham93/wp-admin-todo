@@ -124,15 +124,36 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     /*********
      * LISTS *
      *********/
-    
+    const newListForm         = document.getElementById('todo-new-list-container');
 
-    // CREATE LIST
+    // SHOW CREATE NEW LIST
+    const createNewListButton = document.getElementById('todo-new-list-begin');
+
+    createNewListButton.addEventListener('click', function() {
+
+        // hide button & show create list form
+        this.hidden = true;
+        newListForm.hidden = false;
+
+    });
+
+    // HIDE CREATE NEW LIST
+    const cancelNewListButton = document.getElementById('todo-new-list-cancel');
+
+    cancelNewListButton.addEventListener('click', function() {
+
+        newListForm.hidden          = true;
+        createNewListButton.hidden  = false;
+
+    });
+
+    // CREATE NEW LIST
     const createListButton = document.getElementById('todo-new-list-create');
 
     createListButton.addEventListener('click', async function() {
 
         // extract value
-        const newListInput  = document.getElementById('todo-new-list-input');
+        const newListInput  = document.getElementById('todo-new-list-name');
         const listName      = newListInput.value;
 
         // create payload
