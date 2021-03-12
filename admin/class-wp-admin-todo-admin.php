@@ -119,35 +119,15 @@ class Wp_Admin_Todo_Admin {
 	public function create_admin_pages()
     {
         add_menu_page('TODO Settings', 'Admin TODO', 'manage_options', 'wp-admin-todo-settings', [$this, 'main_page_init'], 'dashicons-edit');
-        add_submenu_page('wp-admin-todo-settings' , 'Create List', 'Create a List', 'manage_options', 'wp-admin-todo-create-list', [$this, 'create_list_page_init']);
-        add_submenu_page('wp-admin-todo-settings' , 'Edit List', 'Edit List', 'manage_options', 'wp-admin-todo-edit-list', [$this, 'edit_list_page_init']);
     }
 
     /**
      * PHP View for TODO MAIN
-     * @since 1.0.0
+     * @since 2.0.0
      */
     public function main_page_init()
     {
         include_once 'partials/wp-admin-todo-admin-display.php';
-    }
-
-    /**
-     * PHP View for Create TODO List page
-     * @since 2.0.0
-     */
-    public function create_list_page_init()
-    {
-        include_once 'partials/wp-admin-todo-admin-create-list-display.php';
-    }
-
-    /**
-     * PHP View for Create TODO List page
-     * @since 2.0.0
-     */
-    public function edit_list_page_init()
-    {
-        include_once 'partials/wp-admin-todo-admin-edit-list-display.php';
     }
 
     public function register_custom_posts()
@@ -177,101 +157,5 @@ class Wp_Admin_Todo_Admin {
     /**
      * CRUD - CUSTOM REST FUNCTIONS
      */
-
-    /**
-     * ADD A TODO ITEM
-     */
-    public function create_item()
-    {
-        $content    = $_POST['content'];
-        $list_ID    = (int) $_POST['list-ID'];
-
-        $res = $this->database->create_item( $list_ID, $content );
-
-        if ( $res ) {
-            wp_send_json_success( $res );
-        } else {
-            wp_send_json_error();
-        }
-    }
-
-    /**
-     * EDIT A TODO ITEM
-     * Overloaded:
-     *  1. Change status of the item (if status is defined)
-     *  2. Change the content of the item (if content is defined)
-     */
-    public function edit_item()
-    {
-//        $content    = $_POST['todo-content'];
-//        $status     = $_POST['todo-status'];
-        $ID         = $_POST['todo-ID'];
-
-        // 1. status update
-        if ( isset( $_POST['todo-status'] ) ) {
-
-            $postarr = array(
-                'post_type'    => 'wp-admin-todo',
-                'ID'           => $ID,
-                'post_status'  => $_POST['todo-status']
-            );
-
-        }
-        // 2. content update
-        elseif ( isset( $_POST['todo-content'] ) ) {
-
-            $postarr = array(
-                'post_type'    => 'wp-admin-todo',
-                'ID'           => $ID,
-                'post_content' => $_POST['todo-content']
-            );
-
-        }
-
-        wp_update_post( $postarr );
-    }
-
-    /**
-     * DELETES TODO ITEM
-     */
-    public function delete_item()
-    {
-        $post_ID    = $_POST['todo-ID'];
-
-        wp_delete_post( $post_ID );
-    }
-
-    /**
-     * CREATES TODO ITEM
-     */
-    public function create_list()
-    {
-        $list_name = $_POST['list-name'];
-
-        $res = $this->database->create_list( $list_name );
-
-        if ( $res ) {
-            wp_send_json_success( $res );
-        } else {
-            wp_send_json_error();
-        }
-
-    }
-
-    /**
-     * READS A SINGLE LIST W/ LIST ID
-     */
-    public function read_list()
-    {
-        $list_ID = (int) $_POST['list-ID'];
-
-        $res = $this->database->read_list( $list_ID );
-
-        if ( $res ) {
-            wp_send_json_success( $res );
-        } else {
-            wp_send_json_error();
-        }
-    }
 
 }

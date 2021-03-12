@@ -14,50 +14,91 @@
 require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admin-todo-database.php' );
 ?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <h1 class="text-primary">WordPress Admin TODO</h1>
 
-<!--Create Lists-->
-
-<!--CREATE NEW LIST TOGGLE-->
-<button id="todo-new-list" class="btn btn-outline-primary btn-small">
+<!-- CREATE LISTS -->
+<button id="todo-new-list-begin" class="btn btn-outline-primary btn-small">
     Create New list
 </button>
 
-<div id="todo-new-list-container" class="my-3">
+<div id="todo-new-list-container" class="my-3" hidden>
     <h2>Create a New List</h2>
     <div class="container-fluid ml-0">
         <div class="col-md-2">
-            <label for="todo-new-list" class="form-label">New List Name</label>
-            <input type="text" id="todo-new-list-input" class="form-control">
+            <label for="todo-new-list-name" class="form-label">New List Name</label>
+            <input type="text" id="todo-new-list-name" class="form-control">
 
             <button id="todo-new-list-create" class="btn btn-outline-success mt-3 mr-0">
                 Create
+            </button>
+            <button id="todo-new-list-cancel" class="btn btn-outline-dark mt-3 mr-0">
+                Cancel
             </button>
         </div>
     </div>
 </div>
 
-<!-- Dropdown of lists to edit -->
+<!-- LIST DISPLAY -->
 <div id="todo-list-container" class="my-3">
 
     <?php
     $database   = new Wp_Admin_Todo_Database();
     $todo_lists = $database->get_lists();
 
-
-
     // display empty if retrieval is empty
-    if ( ! count( $todo_lists ) ) {
+    if ( ! count( $todo_lists ) ) { ?>
 
-        printf( '<h4>%s</h4>', 'No lists available' );
+        <h4>No lists available</h4>
 
-    } else {
+    <?php } else {
 
-        // display each row as an option
+        // display each list
         foreach ( $todo_lists as $list )
         {
-            printf( '<option value="%d">%s</option>', $list->id, $list->list_name );
+            // BEGIN LIST
+            ?>
+                <ul id="todo-list-<?php echo $list->id; ?>" class="list-group col-md-4">
+                    <li>
+                        <h4><?php echo $list->list_name; ?></h4>
+                    </li>
+            <?php
+            $list_items = $database->read_list( $list->id )->items;
+
+            // display empty if no items
+            if ( !count( $list_items ) ) {
+
+                ?>
+                    <li class="todo-list-item-row list-group-item">
+                        <h5>No items available</h5>
+                    </li>
+                <?php
+
+            } else {
+
+                foreach ( $list_items as $item )
+                {
+                    // id, content, completed
+                    ?>
+                        <li class="todo-list-item list-group-item input-group"
+                            id="todo-list-item-<?php echo $item->id; ?>">
+                            <input type="checkbox"
+                                   class="todo-list-item-checkbox"
+                            >
+                            <input type="text"
+                                   value="<?php echo $item->content; ?>"
+                                   disabled
+                                   class="todo-list-item-input"
+                            >
+                        </li>
+                    <?php
+                }
+
+            }
+
+            // END LIST
+            ?>
+                </ul>
+            <?php
         }
 
     }
@@ -83,46 +124,12 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
     /*********
      * LISTS *
      *********/
-
-        // show edit form if list is selected
-    const listSelector = document.getElementById('list-edit-dropdown');
-
-    listSelector.addEventListener('change', async function() {
-
-        const listID = Number(this.value);
-
-        clearList();
-
-        if (listID > 0) {
-            // payload
-            const formData = new FormData();
-            formData.append('action', 'read_list');
-            formData.append('list-ID', listID);
-
-            const res = await fetch(ajaxUrl, {
-                method: 'POST',
-                body:   formData
-            });
-
-            const { success, data } = await res.json();
-
-            // if successful then send
-            if (success) {
-                renderList(data);
-            } else {
-                // send error
-            }
-        } else {
-            const listEdit = document.getElementById('list-edit');
-            listEdit.setAttribute('hidden', true);
-        }
-
-    });
+    
 
     // CREATE LIST
-    const createButton = document.getElementById('todo-new-list-create');
+    const createListButton = document.getElementById('todo-new-list-create');
 
-    createButton.addEventListener('click', async function() {
+    createListButton.addEventListener('click', async function() {
 
         // extract value
         const newListInput  = document.getElementById('todo-new-list-input');
@@ -147,6 +154,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
      * @param id            {number}
      * @param list_name     {string}
      * @param items         { { id: number, content: string, completed: boolean, list_id: number }[] }
+     * @TODO - may be deprecated
      */
     const renderList = ({ id, list_name, items }) => {
         // show form
@@ -177,6 +185,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
 
     /**
      * Clears list items
+     * @TODO - may be deprecated
      */
     const clearList = () => {
         const listItems = document.querySelectorAll('#list-items li');
@@ -189,7 +198,7 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
      * ITEMS *
      *********/
 
-        // Inject Add New Item input
+    // Inject Add New Item input
     const addNewItemButton = document.getElementById('list-edit-add-item');
 
     addNewItemButton.addEventListener('click', function() {
@@ -282,5 +291,4 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         `);
 
     }
-
 </script>

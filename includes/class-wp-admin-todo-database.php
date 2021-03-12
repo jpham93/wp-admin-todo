@@ -66,13 +66,16 @@ class Wp_Admin_Todo_Database
 
     /**
      * Insert a new list record into wp_admin_todo_lists
-     * @param $list_name    string
+     * @param $list_name string     - name of the new list
+     * @return bool|int             - returns
      */
     public function create_list( $list_name )
     {
+        $res = false;
+
         try
         {
-            $this->wpdb->insert(
+            $res = $this->wpdb->insert(
                 $this->lists_table,
                 array(
                     'list_name' => $list_name,
@@ -84,6 +87,8 @@ class Wp_Admin_Todo_Database
             error_log($e);
             echo $e;
         }
+
+        return $res;
     }
 
     /**
