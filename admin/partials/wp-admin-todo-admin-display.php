@@ -57,9 +57,19 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         {
             // BEGIN LIST
             ?>
-                <ul id="todo-list-<?php echo $list->id; ?>" class="list-group col-md-4">
-                    <li>
-                        <h4><?php echo $list->list_name; ?></h4>
+                <ul id="todo-list-<?php echo $list->id; ?>" class="list-group col-md-4 my-3">
+                    <li class="d-inline-flex justify-content-between align-items-center">
+                        <h4 class="d-inline mb-0">
+                            <?php echo $list->list_name; ?>
+                        </h4>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-warning">
+                                <span class="dashicons dashicons-edit-large"></span>
+                            </button>
+                            <button class="btn btn-sm btn-danger">
+                                <span class="dashicons dashicons-trash"></span>
+                            </button>
+                        </div>
                     </li>
             <?php
             $list_items = $database->read_list( $list->id )->items;
