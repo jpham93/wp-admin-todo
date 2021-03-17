@@ -38,6 +38,10 @@ class Wp_Admin_Todo_Admin_API {
         require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-wp-admin-todo-database.php';
     }
 
+    /****************
+     * ITEM ACTIONS *
+     ****************/
+
     /**
      * ADD A TODO ITEM
      */
@@ -101,24 +105,20 @@ class Wp_Admin_Todo_Admin_API {
         wp_delete_post( $post_ID );
     }
 
+    /****************
+     * LIST ACTIONS *
+     ****************/
+
     /**
-     * CREATES TODO ITEM
+     * CREATES TODO LISTS
      */
     public function create_list()
     {
         $list_name = $_POST['list-name'];
 
-        error_log( $list_name );
-
         $res = $this->database->create_list( $list_name );
 
-        if ( $res ) {
-            wp_send_json_success( $res );
-        } else {
-            wp_send_json_error();
-        }
-
-        error_log('Open up please');
+        $res ? wp_send_json_success( $res ) : wp_send_json_error();
     }
 
     /**
@@ -130,10 +130,6 @@ class Wp_Admin_Todo_Admin_API {
 
         $res = $this->database->read_list( $list_ID );
 
-        if ( $res ) {
-            wp_send_json_success( $res );
-        } else {
-            wp_send_json_error();
-        }
+        $res ? wp_send_json_success( $res ) : wp_send_json_error();
     }
 }

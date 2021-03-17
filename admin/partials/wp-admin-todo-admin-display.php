@@ -156,8 +156,6 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
         const newListInput  = document.getElementById('todo-new-list-name');
         const listName      = newListInput.value;
 
-        console.log(listName);
-
         // create payload
         const formData      = new FormData();
         formData.append('action', 'create_list');
@@ -168,18 +166,28 @@ require_once( ABSPATH . 'wp-content/plugins/wp-admin-todo/includes/class-wp-admi
             body:    formData
         });
 
-        console.log(res);
+        try {
+            const json = await res.text();
+            console.log('Create new list res:', json);
 
-        // @todo - flash w/ hide spinner list created (success message)
+            // @todo - flash w/ hide spinner list created (success message)
+            if (json.success) {
+                console.log(json);
+            }
 
-        // show previous forms
+            // show previous forms
+        } catch(e) {
+
+            console.error('WP Todo Admin Error Line 178:', e);
+
+        }
         newListForm.hidden          = true;
         createNewListButton.hidden  = false;
 
     });
 
     /**
-     * Injects the list data into editing
+     * Injects a newly created list to avoid refreshing the page
      * @param id            {number}
      * @param list_name     {string}
      * @param items         { { id: number, content: string, completed: boolean, list_id: number }[] }

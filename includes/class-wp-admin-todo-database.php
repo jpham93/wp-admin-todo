@@ -66,26 +66,29 @@ class Wp_Admin_Todo_Database
 
     /**
      * Insert a new list record into wp_admin_todo_lists
-     * @param $list_name string     - name of the new list
-     * @return bool|int             - returns
+     * @param $list_name string             - name of the new list
+     * @return bool|int|Exception           - returns
      */
     public function create_list( $list_name )
     {
-        $res = false;
+        $res = array();
 
         try
         {
-            $res = $this->wpdb->insert(
+            $res['rows_changed'] = $this->wpdb->insert(
                 $this->lists_table,
                 array(
                     'list_name' => $list_name,
                 )
             );
+
+            // most recent ID
+            $res['insert_id'] = $this->wpdb->insert_id;
         }
         catch (Exception $e)
         {
             error_log($e);
-            echo $e;
+            $res['error'] = array( $e->getMessage() );
         }
 
         return $res;
